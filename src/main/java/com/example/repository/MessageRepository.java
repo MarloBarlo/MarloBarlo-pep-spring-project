@@ -9,12 +9,10 @@ import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message,Long>{
 
-    //Message createMessage(Message message);
-
-    //List<Message> findAllMessages();
-
     Message findMessageByMessageId(int id);
 
+    @Modifying
+    @Query("DELETE FROM Message WHERE messageID = :id")
     Message deleteMessageByMessageId(int id);
 
     @Modifying
@@ -25,3 +23,7 @@ public interface MessageRepository extends JpaRepository<Message,Long>{
 
 
 }
+
+//Message createMessage(Message message);
+
+    //List<Message> findAllMessages();

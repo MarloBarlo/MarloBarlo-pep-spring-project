@@ -19,7 +19,7 @@ import java.util.List;
  * where applicable as well as the @ResponseBody and @PathVariable annotations. You should
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
-@SpringBootApplication
+@RestController
 public class SocialMediaController {
 
     @Autowired
@@ -28,21 +28,31 @@ public class SocialMediaController {
     @Autowired
     private MessageService messageService;
 
+
+    /* 
+    if (account.getUsername() == null || account.getUsername().isEmpty()) {
+        return ResponseEntity.status(401).build();
+    }
+    if (account.getPassword() == null || account.getPassword().length() < 4) {
+        return ResponseEntity.status(401).build();
+    }
+    if (accountService.getAccountByUsername(account.getUsername()) != null) {
+        return ResponseEntity.status(401).build();
+    }
+    
+    Account createdAccount = accountService.createAccount(account);
+    return ResponseEntity.ok(createdAccount);
+    */
+
     // User Registration
     @PostMapping("/register")
     public ResponseEntity<Account> register(@RequestBody Account account) {
-        if (account.getUsername() == null || account.getUsername().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        try {
+            Account createdAccount = accountService.createAccount(account);
+            return ResponseEntity.ok(createdAccount);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409).build();
         }
-        if (account.getPassword() == null || account.getPassword().length() < 4) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        if (accountService.getAccountByUsername(account.getUsername()) != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        Account createdAccount = accountService.createAccount(account);
-        return ResponseEntity.ok(createdAccount);
     }
 
     // User Login
@@ -61,11 +71,10 @@ public class SocialMediaController {
         if (message.getMessageText() == null || message.getMessageText().isEmpty() || message.getMessageText().length() > 255) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        if (accountService.getAccountByUsername(message.getPostedBy().toString()) == null) {
+        if (accountService.getAccountByAccountId(message.getPostedBy()) == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        //message.setTimePostedEpoch(System.currentTimeMillis());
         Message createdMessage = messageService.createMessage(message);
         return ResponseEntity.ok(createdMessage);
     }
@@ -86,8 +95,11 @@ public class SocialMediaController {
 
     // Delete Message by ID
     @DeleteMapping("/messages/{messageId}")
-    public ResponseEntity<Void> deleteMessageById(@PathVariable int messageId) {
-        messageService.deleteMessageByMessageId(messageId);
+    public ResponseEntity<Integer> deleteMessageById(@PathVariable int messageId) {
+        if (messageService.getMessageByMessageId(messageId) != null){
+            messageService.deleteMessageByMessageId(messageId);
+            return ResponseEntity.ok(1);
+        } 
         return ResponseEntity.ok().build();
     }
 

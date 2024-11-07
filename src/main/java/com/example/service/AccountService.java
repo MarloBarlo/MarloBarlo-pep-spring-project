@@ -26,15 +26,16 @@ public class AccountService {
         }
 
         accountRepository.save(account);
-        return accountRepository.findAccountByUsername(account.getUsername());
+        Account newAccount = accountRepository.findAccountByUsername(account.getUsername());
+        return newAccount;
     }
 
     public Account login (String username, String password) {
         Account account = accountRepository.findAccountByUsername(username);
-        if (account != null && password == account.getPassword()) {
+        if (account != null && password.equals(account.getPassword())) {
             return accountRepository.findAccountByUsernameAndPassword(username,password);
         }
-        throw new IllegalArgumentException("Username or password is incorrect");
+        return null; //throw new IllegalArgumentException("Username or password is incorrect");
     }
 
     public List<Account> getAllAccounts() {
@@ -47,6 +48,14 @@ public class AccountService {
         }
 
         return accountRepository.findAccountByUsername(usr);
+    }
+
+    public Account getAccountByAccountId(int id) {
+        if (accountRepository.findAccountByAccountId(id) == null) {
+            throw new IllegalArgumentException("username not found");
+        }
+
+        return accountRepository.findAccountByAccountId(id);
     }
 
     public Account deleteAccount(int id) {

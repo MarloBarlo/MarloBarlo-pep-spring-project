@@ -38,9 +38,7 @@ public class MessageService {
         if (messageRepository.findMessageByMessageId(id) == null){
             throw new IllegalArgumentException("message not found");
         }
-        Message message = messageRepository.findMessageByMessageId(id);
-        messageRepository.deleteMessageByMessageId(id);
-        return message;
+        return messageRepository.deleteMessageByMessageId(id); 
     }
 
     //update message by id
