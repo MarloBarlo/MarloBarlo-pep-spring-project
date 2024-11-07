@@ -5,10 +5,11 @@ import com.example.entity.Message;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
  * where applicable as well as the @ResponseBody and @PathVariable annotations. You should
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
+@SpringBootApplication
 public class SocialMediaController {
 
     @Autowired
