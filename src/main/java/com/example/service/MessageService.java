@@ -8,6 +8,8 @@ import com.example.repository.MessageRepository;
 import com.example.entity.Message;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 @Service
 public class MessageService {
 
@@ -17,7 +19,7 @@ public class MessageService {
     //create message
     public Message createMessage(Message message){
         if(message.getMessageText() == null || message.getMessageText().isEmpty() ||
-        message.getMessageText().length() > 255 || message.getPostedBy() == 3){
+        message.getMessageText().length() > 255 || messageRepository.findMessagesByPostedBy(message.getPostedBy()) == null ){
             throw new IllegalArgumentException("Error with the message");
         }
         return messageRepository.save(message);
@@ -34,14 +36,16 @@ public class MessageService {
     }
 
     //delete message by messageId
-    public Message deleteMessageByMessageId(int id){
-        if (messageRepository.findMessageByMessageId(id) == null){
+    @Transactional
+    public Integer deleteMessageByMessageId(int id){
+        if (messageRepository.findMessageByMessageId(id) == null) {
             throw new IllegalArgumentException("message not found");
         }
         return messageRepository.deleteMessageByMessageId(id); 
     }
 
     //update message by id
+    @Transactional
     public Message updateMessageById(String messageText, int messageId) {
         Message oldMessage = messageRepository.findMessageByMessageId(messageId);
         if (oldMessage == null || messageText.length() > 255 ||

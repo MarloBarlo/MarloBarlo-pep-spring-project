@@ -12,12 +12,13 @@ public interface MessageRepository extends JpaRepository<Message,Long>{
     Message findMessageByMessageId(int id);
 
     @Modifying
-    @Query("DELETE FROM Message WHERE messageID = :id")
-    Message deleteMessageByMessageId(int id);
+    @Query("DELETE FROM Message WHERE messageId = :id")
+    Integer deleteMessageByMessageId(int id);
+
 
     @Modifying
-    @Query("UPDATE Message SET message_text= :messageText WHERE message_id = :messageId")
-    Message updatMessageByMessageId (String messageText, int messageId);
+    @Query("UPDATE Message SET message_text= :messageText WHERE messageId = :messageId")
+    Message updatMessageByMessageId(String messageText, int messageId);
 
     List<Message> findMessagesByPostedBy(int postedBy);
 

@@ -28,22 +28,6 @@ public class SocialMediaController {
     @Autowired
     private MessageService messageService;
 
-
-    /* 
-    if (account.getUsername() == null || account.getUsername().isEmpty()) {
-        return ResponseEntity.status(401).build();
-    }
-    if (account.getPassword() == null || account.getPassword().length() < 4) {
-        return ResponseEntity.status(401).build();
-    }
-    if (accountService.getAccountByUsername(account.getUsername()) != null) {
-        return ResponseEntity.status(401).build();
-    }
-    
-    Account createdAccount = accountService.createAccount(account);
-    return ResponseEntity.ok(createdAccount);
-    */
-
     // User Registration
     @PostMapping("/register")
     public ResponseEntity<Account> register(@RequestBody Account account) {
@@ -71,7 +55,7 @@ public class SocialMediaController {
         if (message.getMessageText() == null || message.getMessageText().isEmpty() || message.getMessageText().length() > 255) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        if (accountService.getAccountByAccountId(message.getPostedBy()) == null) {
+        if (messageService.findMessagesByPostedBy(message.getPostedBy()).isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
@@ -96,11 +80,11 @@ public class SocialMediaController {
     // Delete Message by ID
     @DeleteMapping("/messages/{messageId}")
     public ResponseEntity<Integer> deleteMessageById(@PathVariable int messageId) {
-        if (messageService.getMessageByMessageId(messageId) != null){
-            messageService.deleteMessageByMessageId(messageId);
-            return ResponseEntity.ok(1);
+        if (messageService.getMessageByMessageId(messageId) == null){
+            return ResponseEntity.ok().build();
         } 
-        return ResponseEntity.ok().build();
+        messageService.deleteMessageByMessageId(messageId);
+        return ResponseEntity.ok(1); // Return the number of rows updated
     }
 
     // Update Message Text
